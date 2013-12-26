@@ -153,3 +153,26 @@ class RemoteForm(object):
             form_dict['data'] = initial_data
 
         return resolve_promise(form_dict)
+
+
+class RemoteFormset(object):        
+    def __init__(self, formset, *args, **kwargs):
+        self.forms = [RemoteForm(form).as_dict() for form in formset]
+        self.empty_form = RemoteForm(formset.empty_form).as_dict()
+        self.management_form = RemoteForm(formset.management_form).as_dict()
+
+    def as_dict(self):
+        """
+        Returns a formset as a dictionary that looks like the following:
+
+        formset = {
+            'forms': [],
+            'empty_form': {},
+            'management_form': {},
+        }
+        """
+        formset_dict = SortedDict()
+        formset_dict['forms'] = self.forms
+        formset_dict['empty_form'] = self.empty_form
+        formset_dict['management_form'] = self.management_form
+        return formset_dict
