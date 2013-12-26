@@ -49,7 +49,16 @@ class RemoteMultipleHiddenInput(RemoteHiddenInput):
     def as_dict(self):
         widget_dict = super(RemoteMultipleHiddenInput, self).as_dict()
 
-        widget_dict['choices'] = self.widget.choices
+        if isinstance(self.widget.choices, (list, tuple)):
+            widget_dict['choices'] = self.widget.choices
+        else:
+            # django.db.ModelChoiceIterator
+            widget_dict['choices'] = []
+            for key, value in self.widget.choices:
+                widget_dict['choices'].append({
+                    'value': key,
+                    'display': value
+                })
 
         return widget_dict
 
